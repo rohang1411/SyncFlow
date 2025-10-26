@@ -11,6 +11,10 @@ on:
         required: true
         default: '1.0.0'
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build-and-release:
     runs-on: windows-latest
@@ -134,7 +138,7 @@ jobs:
       shell: pwsh
       
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ steps.get_version.outputs.VERSION }}
         name: SyncFlow v${{ steps.get_version.outputs.VERSION }}
@@ -144,5 +148,6 @@ jobs:
           release/SyncFlow-v${{ steps.get_version.outputs.VERSION }}-win-x64.exe
         draft: false
         prerelease: false
+        make_latest: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
