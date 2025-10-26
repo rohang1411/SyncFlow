@@ -4,7 +4,7 @@ echo SyncFlow Release Build Script
 echo ========================================
 
 :: Set version (update this for each release)
-set VERSION=2.0.0
+set VERSION=1.0.0
 set BUILD_DIR=build
 set RELEASE_DIR=release
 

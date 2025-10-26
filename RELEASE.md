@@ -12,12 +12,12 @@ This guide covers the complete process for creating and publishing SyncFlow rele
 ## 🔄 Version Management
 
 SyncFlow uses [Semantic Versioning](https://semver.org/):
-- **MAJOR.MINOR.PATCH** (e.g., 2.1.0)
+- **MAJOR.MINOR.PATCH** (e.g., 1.1.0)
 - **MAJOR**: Breaking changes
 - **MINOR**: New features (backward compatible)
 - **PATCH**: Bug fixes (backward compatible)
 
-### Current Version: 2.0.0
+### Current Version: 1.0.0
 
 ## 🛠️ Release Process
 
@@ -26,13 +26,13 @@ SyncFlow uses [Semantic Versioning](https://semver.org/):
 1. **Update Version**
    ```powershell
    # Update to new version and create tag
-   .\Update-Version.ps1 -NewVersion "2.1.0" -CreateTag
+   .\Update-Version.ps1 -NewVersion "1.1.0" -CreateTag
    ```
 
 2. **Push Changes**
    ```bash
    git push origin main
-   git push origin v2.1.0
+   git push origin v1.1.0
    ```
 
 3. **Automatic Build**
@@ -44,13 +44,13 @@ SyncFlow uses [Semantic Versioning](https://semver.org/):
 
 1. **Update Version**
    ```powershell
-   .\Update-Version.ps1 -NewVersion "2.1.0"
+   .\Update-Version.ps1 -NewVersion "1.1.0"
    ```
 
 2. **Build Release**
    ```powershell
    # Using PowerShell script (recommended)
-   .\Build-Release.ps1 -Version "2.1.0" -CreateTag
+   .\Build-Release.ps1 -Version "1.1.0" -CreateTag
    
    # Or using batch file
    .\build-release.bat
@@ -59,8 +59,8 @@ SyncFlow uses [Semantic Versioning](https://semver.org/):
 3. **Create GitHub Release**
    - Go to GitHub repository
    - Click "Releases" → "Create a new release"
-   - Tag: `v2.1.0`
-   - Title: `SyncFlow v2.1.0`
+   - Tag: `v1.1.0`
+   - Title: `SyncFlow v1.1.0`
    - Upload files from `release/` folder
    - Publish release
 
@@ -70,8 +70,8 @@ After building, you'll find these files in the `release/` folder:
 
 ```
 release/
-├── SyncFlow-v2.1.0-win-x64.zip    # Complete package (~15-25 MB)
-└── SyncFlow-v2.1.0-win-x64.exe    # Standalone executable (~40-60 MB)
+├── SyncFlow-v1.1.0-win-x64.zip    # Complete package (~15-25 MB)
+└── SyncFlow-v1.1.0-win-x64.exe    # Standalone executable (~40-60 MB)
 ```
 
 ### File Descriptions
@@ -87,7 +87,7 @@ release/
 .\Build-Release.ps1
 
 # Build with specific version
-.\Build-Release.ps1 -Version "2.1.0"
+.\Build-Release.ps1 -Version "1.1.0"
 
 # Skip tests
 .\Build-Release.ps1 -SkipTests
@@ -104,13 +104,13 @@ release/
 ### Version Update Script (`Update-Version.ps1`)
 ```powershell
 # Update version only
-.\Update-Version.ps1 -NewVersion "2.1.0"
+.\Update-Version.ps1 -NewVersion "1.1.0"
 
 # Update version and create tag
-.\Update-Version.ps1 -NewVersion "2.1.0" -CreateTag
+.\Update-Version.ps1 -NewVersion "1.1.0" -CreateTag
 
 # Dry run (preview changes)
-.\Update-Version.ps1 -NewVersion "2.1.0" -DryRun
+.\Update-Version.ps1 -NewVersion "1.1.0" -DryRun
 ```
 
 ## 🤖 GitHub Actions
@@ -118,7 +118,7 @@ release/
 The repository includes automated CI/CD:
 
 ### Triggers
-- **Tag Push**: `git push origin v2.1.0`
+- **Tag Push**: `git push origin v1.1.0`
 - **Manual Dispatch**: GitHub Actions tab → "Build and Release"
 
 ### Workflow Steps
@@ -169,10 +169,10 @@ The repository includes automated CI/CD:
 **"Git tag already exists"**
 ```bash
 # Delete local tag
-git tag -d v2.1.0
+git tag -d v1.1.0
 
 # Delete remote tag
-git push origin --delete v2.1.0
+git push origin --delete v1.1.0
 ```
 
 ### File Size Issues
@@ -189,8 +189,7 @@ git push origin --delete v2.1.0
 
 | Version | Date | Size (ZIP/EXE) | Key Features |
 |---------|------|----------------|--------------|
-| 2.0.0   | 2024 | ~20MB/~50MB   | Enhanced transfers, storage validation, UI fixes |
-| 1.0.0   | 2024 | ~15MB/~40MB   | Initial release |
+| 1.0.0   | 2024 | ~20MB/~50MB   | Initial release with enhanced transfers, storage validation, UI fixes |
 
 ## 🔗 Useful Commands
 

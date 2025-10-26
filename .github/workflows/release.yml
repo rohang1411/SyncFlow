@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., 2.0.0)'
+        description: 'Release version (e.g., 1.0.0)'
         required: true
-        default: '2.0.0'
+        default: '1.0.0'
 
 jobs:
   build-and-release:
@@ -127,7 +127,7 @@ jobs:
         
         ---
         
-        **Full Changelog**: https://github.com/${{ github.repository }}/compare/v1.0.0...v$version
+        **Full Changelog**: https://github.com/${{ github.repository }}/commits/v$version
         "@
         
         Set-Content -Path "release-notes.md" -Value $releaseNotes

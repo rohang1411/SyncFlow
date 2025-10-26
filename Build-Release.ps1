@@ -1,7 +1,7 @@
 # SyncFlow Release Build Script
 param(
     [Parameter(Mandatory=$false)]
-    [string]$Version = "2.0.0",
+    [string]$Version = "1.0.0",
     
     [Parameter(Mandatory=$false)]
     [switch]$SkipTests = $false,

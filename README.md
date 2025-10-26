@@ -4,7 +4,7 @@
 
 SyncFlow is a professional-grade file synchronization application built with WPF and .NET 8, featuring a modern Fluent Design interface, comprehensive transfer validation, and detailed progress reporting.
 
-![SyncFlow](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![SyncFlow](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![.NET](https://img.shields.io/badge/.NET-8.0-purple.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -33,12 +33,12 @@ SyncFlow is a professional-grade file synchronization application built with WPF
 
 ## 📥 Download
 
-### Latest Release: v2.0.0
+### Latest Release: v1.0.0
 
 | Package | Size | Description |
 |---------|------|-------------|
-| [📦 SyncFlow-v2.0.0-win-x64.zip](../../releases/latest) | ~20 MB | Complete package with all files |
-| [🚀 SyncFlow-v2.0.0-win-x64.exe](../../releases/latest) | ~50 MB | Standalone executable |
+| [📦 SyncFlow-v1.0.0-win-x64.zip](../../releases/latest) | ~20 MB | Complete package with all files |
+| [🚀 SyncFlow-v1.0.0-win-x64.exe](../../releases/latest) | ~50 MB | Standalone executable |
 
 ## 🔧 System Requirements
 
@@ -63,7 +63,7 @@ SyncFlow is a professional-grade file synchronization application built with WPF
 4. **Start Transfer**: Click "Start Transfer" to begin file synchronization
 5. **Monitor Progress**: Watch real-time progress with detailed statistics
 
-## 🎯 What's New in v2.0.0
+## 🎯 What's New in v1.0.0
 
 ### 🚀 Enhanced Transfer System
 - **Accurate File Counting**: Recursive scanning ensures all files are counted correctly
