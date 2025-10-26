@@ -10,8 +10,10 @@ namespace SyncFlow.Models
     public class AppSettings : INotifyPropertyChanged
     {
         private bool _isDarkMode = true;
-        private bool _isTransparencyEnabled = true;
+        private bool _isTransparencyEnabled = false;
         private bool _enableGlassEffect = true;
+        private double _transparencyAmount = 80.0;
+        private bool _enableAnimations = true;
         private string _profileStoragePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "SyncFlow", "Profiles");
@@ -59,6 +61,39 @@ namespace SyncFlow.Models
                 if (_enableGlassEffect != value)
                 {
                     _enableGlassEffect = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Transparency amount (0-100)
+        /// </summary>
+        public double TransparencyAmount
+        {
+            get => _transparencyAmount;
+            set
+            {
+                var clampedValue = Math.Max(10, Math.Min(100, value));
+                if (Math.Abs(_transparencyAmount - clampedValue) > 0.1)
+                {
+                    _transparencyAmount = clampedValue;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Whether animations are enabled
+        /// </summary>
+        public bool EnableAnimations
+        {
+            get => _enableAnimations;
+            set
+            {
+                if (_enableAnimations != value)
+                {
+                    _enableAnimations = value;
                     OnPropertyChanged();
                 }
             }

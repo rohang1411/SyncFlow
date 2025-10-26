@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using System.Windows;
 using SyncFlow.Models;
 using Wpf.Ui.Controls;
+using Application = System.Windows.Application;
 
 namespace SyncFlow.Services;
 
@@ -39,7 +40,7 @@ public class ThemeService : IThemeService
 
         try
         {
-            var app = System.Windows.Application.Current;
+            var app = Application.Current;
             if (app?.Resources == null)
             {
                 _logger.LogWarning("Application resources not available for theme change");
@@ -111,23 +112,74 @@ public class ThemeService : IThemeService
     {
         try
         {
+            _logger.LogInformation("Applying window effects - Transparency: {Transparency}, Glass: {Glass}, Amount: {Amount}", 
+                _appSettings.IsTransparencyEnabled, _appSettings.EnableGlassEffect, _appSettings.TransparencyAmount);
+
+            // Ensure ExtendsContentIntoTitleBar is set before applying backdrop
+            if (!window.ExtendsContentIntoTitleBar)
+            {
+                window.ExtendsContentIntoTitleBar = true;
+            }
+
+            // Calculate opacity from transparency amount (10-100 -> 0.90-1.00)
+            double opacity = 1.0 - (_appSettings.TransparencyAmount / 1000.0);
+            opacity = Math.Max(0.90, Math.Min(1.0, opacity));
+
+            // Mutual exclusivity is enforced in SettingsViewModel, but double-check here
             if (_appSettings.IsTransparencyEnabled && _appSettings.EnableGlassEffect)
             {
-                // Enable Mica effect (Windows 11)
-                window.WindowBackdropType = WindowBackdropType.Mica;
-                window.ExtendsContentIntoTitleBar = true;
+                _logger.LogWarning("Both transparency and glass effect are enabled - this should not happen. Disabling glass effect.");
+                _appSettings.EnableGlassEffect = false;
+            }
+
+            if (_appSettings.EnableGlassEffect)
+            {
+                // Enable Glass/Mica effect (Windows 11)
+                try
+                {
+                    window.WindowBackdropType = WindowBackdropType.Mica;
+                    window.Opacity = 1.0; // Glass effect doesn't use opacity
+                    _logger.LogInformation("Applied Mica (glass) effect to window: {WindowTitle}", window.Title);
+                }
+                catch (Exception micaEx)
+                {
+                    _logger.LogWarning(micaEx, "Mica effect not supported, falling back to Acrylic");
+                    try
+                    {
+                        window.WindowBackdropType = WindowBackdropType.Acrylic;
+                        window.Opacity = 0.95;
+                        _logger.LogInformation("Applied Acrylic effect as fallback to window: {WindowTitle}", window.Title);
+                    }
+                    catch (Exception acrylicEx)
+                    {
+                        _logger.LogWarning(acrylicEx, "Acrylic effect also not supported, using no backdrop");
+                        window.WindowBackdropType = WindowBackdropType.None;
+                        window.Opacity = 1.0;
+                    }
+                }
             }
             else if (_appSettings.IsTransparencyEnabled)
             {
-                // Enable Acrylic effect (Windows 10+)
-                window.WindowBackdropType = WindowBackdropType.Acrylic;
-                window.ExtendsContentIntoTitleBar = true;
+                // Enable Acrylic effect with custom opacity (Windows 10+)
+                try
+                {
+                    window.WindowBackdropType = WindowBackdropType.Acrylic;
+                    window.Opacity = opacity;
+                    _logger.LogInformation("Applied Acrylic effect with opacity {Opacity} to window: {WindowTitle}", opacity, window.Title);
+                }
+                catch (Exception acrylicEx)
+                {
+                    _logger.LogWarning(acrylicEx, "Acrylic effect not supported, using opacity only");
+                    window.WindowBackdropType = WindowBackdropType.None;
+                    window.Opacity = opacity;
+                }
             }
             else
             {
                 // Disable all effects
                 window.WindowBackdropType = WindowBackdropType.None;
-                window.ExtendsContentIntoTitleBar = false;
+                window.Opacity = 1.0;
+                _logger.LogInformation("Disabled all visual effects for window: {WindowTitle}", window.Title);
             }
         }
         catch (Exception ex)
@@ -138,7 +190,8 @@ public class ThemeService : IThemeService
             try
             {
                 window.WindowBackdropType = WindowBackdropType.None;
-                window.ExtendsContentIntoTitleBar = false;
+                window.ExtendsContentIntoTitleBar = true;
+                window.Opacity = 1.0;
             }
             catch (Exception fallbackEx)
             {
@@ -150,7 +203,8 @@ public class ThemeService : IThemeService
     private void OnAppSettingsChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(AppSettings.IsTransparencyEnabled) || 
-            e.PropertyName == nameof(AppSettings.EnableGlassEffect))
+            e.PropertyName == nameof(AppSettings.EnableGlassEffect) ||
+            e.PropertyName == nameof(AppSettings.TransparencyAmount))
         {
             ApplyVisualEffects();
         }

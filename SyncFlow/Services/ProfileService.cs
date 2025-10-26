@@ -185,21 +185,29 @@ public class ProfileService : IProfileService
             errors.Add("Profile name is required");
         }
 
-        if (!profile.SourceFolders.Any())
+        if (profile.FolderMappings == null || !profile.FolderMappings.Any())
         {
-            errors.Add("At least one source folder is required");
+            errors.Add("At least one folder mapping is required");
         }
-
-        if (string.IsNullOrWhiteSpace(profile.DestinationFolder))
+        else
         {
-            errors.Add("Destination folder is required");
-        }
-
-        foreach (var sourceFolder in profile.SourceFolders)
-        {
-            if (!Directory.Exists(sourceFolder))
+            for (int i = 0; i < profile.FolderMappings.Count; i++)
             {
-                errors.Add($"Source folder does not exist: {sourceFolder}");
+                var mapping = profile.FolderMappings[i];
+                
+                if (string.IsNullOrWhiteSpace(mapping.SourcePath))
+                {
+                    errors.Add($"Folder mapping {i + 1}: Source path is required");
+                }
+                else if (!Directory.Exists(mapping.SourcePath))
+                {
+                    errors.Add($"Folder mapping {i + 1}: Source folder does not exist: {mapping.SourcePath}");
+                }
+
+                if (string.IsNullOrWhiteSpace(mapping.DestinationPath))
+                {
+                    errors.Add($"Folder mapping {i + 1}: Destination path is required");
+                }
             }
         }
 

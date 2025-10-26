@@ -11,14 +11,45 @@ namespace SyncFlow.Services;
 
 public class DialogService : IDialogService
 {
+    private readonly IEnhancedFolderBrowserService? _folderBrowserService;
+
+    public DialogService(IEnhancedFolderBrowserService? folderBrowserService = null)
+    {
+        _folderBrowserService = folderBrowserService;
+    }
+
     public string? SelectDirectory(string title = "Select Directory")
     {
-        var dialog = new OpenFolderDialog
+        // Try enhanced folder browser first (supports MTP devices)
+        if (_folderBrowserService != null)
         {
-            Title = title
-        };
+            var result = _folderBrowserService.SelectFolder(title);
+            if (!string.IsNullOrEmpty(result))
+                return result;
+        }
 
-        return dialog.ShowDialog() == true ? dialog.FolderName : null;
+        // Enhanced fallback with smartphone instructions
+        try
+        {
+            var dialog = new OpenFolderDialog
+            {
+                Title = title + " - For smartphones: Enable File Transfer mode and unlock screen"
+            };
+            return dialog.ShowDialog() == true ? dialog.FolderName : null;
+        }
+        catch (Exception)
+        {
+            // Final fallback to Windows Forms folder browser
+            using var folderDialog = new System.Windows.Forms.FolderBrowserDialog
+            {
+                Description = title + "\n\nTo access your smartphone:\n1. Connect via USB\n2. Enable 'File Transfer' mode\n3. Unlock your phone\n4. Trust this computer",
+                UseDescriptionForTitle = true,
+                ShowNewFolderButton = false,
+                RootFolder = Environment.SpecialFolder.MyComputer
+            };
+            return folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK ? 
+                folderDialog.SelectedPath : null;
+        }
     }
 
     public string? SelectFile(string title, string filter)

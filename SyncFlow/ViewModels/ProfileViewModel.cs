@@ -387,18 +387,29 @@ namespace SyncFlow.ViewModels
             ResetState();
         }
 
-        private bool CanExecuteEdit() => CurrentState == ProfileState.Idle;
+        private bool CanExecuteEdit() => CurrentState == ProfileState.Idle || CurrentState == ProfileState.Completed || CurrentState == ProfileState.Failed;
 
         private void ExecuteEdit(object? parameter)
         {
             EditRequested?.Invoke(this, EventArgs.Empty);
         }
 
-        private bool CanExecuteDelete() => CurrentState == ProfileState.Idle;
+        private bool CanExecuteDelete() => CurrentState == ProfileState.Idle || CurrentState == ProfileState.Completed || CurrentState == ProfileState.Failed;
 
         private void ExecuteDelete(object? parameter)
         {
-            DeleteRequested?.Invoke(this, EventArgs.Empty);
+            _logger?.LogInformation("ExecuteDelete called for profile: {ProfileName}, State: {State}", 
+                _profile.Name, CurrentState);
+            
+            if (DeleteRequested != null)
+            {
+                _logger?.LogInformation("Invoking DeleteRequested event for profile: {ProfileName}", _profile.Name);
+                DeleteRequested.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                _logger?.LogWarning("DeleteRequested event has no subscribers for profile: {ProfileName}", _profile.Name);
+            }
         }
 
         #endregion
@@ -407,52 +418,80 @@ namespace SyncFlow.ViewModels
 
         private void UpdateProgress(TransferProgress progress)
         {
-            CurrentFile = progress.CurrentFile;
-            ProgressPercentage = progress.Percentage;
-            
-            // Note: These properties would need to be added to TransferProgress model
-            // For now, using simplified progress
-            StatusMessage = $"Transferring... {progress.FilesCopied} of {progress.TotalFiles} files";
+            // Ensure UI updates happen on UI thread
+            System.Windows.Application.Current?.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    CurrentFile = progress.CurrentFile;
+                    ProgressPercentage = progress.Percentage;
+                    
+                    // Note: These properties would need to be added to TransferProgress model
+                    // For now, using simplified progress
+                    StatusMessage = $"Transferring... {progress.FilesCopied} of {progress.TotalFiles} files";
+                    
+                    _logger?.LogDebug("Progress updated: {Percent}% - {Copied}/{Total} files", 
+                        progress.Percentage, progress.FilesCopied, progress.TotalFiles);
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex, "Error updating progress");
+                }
+            });
         }
 
         private void UpdateEnhancedProgress(EnhancedTransferProgress progress)
         {
-            CurrentFile = progress.CurrentFile;
-            ProgressPercentage = progress.PercentComplete;
-            TotalFiles = progress.TotalFiles;
-            ProcessedFiles = progress.ProcessedFiles;
-            SuccessfulFiles = progress.SuccessfulFiles;
-            FailedFiles = progress.FailedFiles;
-            BytesTransferred = progress.ProcessedBytes;
-            TotalBytes = progress.TotalBytes;
-            TimeElapsed = progress.ElapsedTime;
+            // Ensure UI updates happen on UI thread
+            System.Windows.Application.Current?.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    CurrentFile = progress.CurrentFile;
+                    ProgressPercentage = progress.PercentComplete;
+                    TotalFiles = progress.TotalFiles;
+                    ProcessedFiles = progress.ProcessedFiles;
+                    SuccessfulFiles = progress.SuccessfulFiles;
+                    FailedFiles = progress.FailedFiles;
+                    BytesTransferred = progress.ProcessedBytes;
+                    TotalBytes = progress.TotalBytes;
+                    TimeElapsed = progress.ElapsedTime;
 
-            // Calculate transfer speed
-            if (progress.ElapsedTime.TotalSeconds > 0)
-            {
-                TransferSpeed = progress.ProcessedBytes / progress.ElapsedTime.TotalSeconds / (1024 * 1024); // MB/s
-            }
+                    // Calculate transfer speed
+                    if (progress.ElapsedTime.TotalSeconds > 0)
+                    {
+                        TransferSpeed = progress.ProcessedBytes / progress.ElapsedTime.TotalSeconds / (1024 * 1024); // MB/s
+                    }
 
-            // Calculate estimated time remaining
-            if (progress.PercentComplete > 0 && progress.PercentComplete < 100)
-            {
-                var totalEstimatedTime = progress.ElapsedTime.TotalSeconds * (100.0 / progress.PercentComplete);
-                TimeRemaining = TimeSpan.FromSeconds(totalEstimatedTime - progress.ElapsedTime.TotalSeconds);
-            }
-            else
-            {
-                TimeRemaining = TimeSpan.Zero;
-            }
+                    // Calculate estimated time remaining
+                    if (progress.PercentComplete > 0 && progress.PercentComplete < 100)
+                    {
+                        var totalEstimatedTime = progress.ElapsedTime.TotalSeconds * (100.0 / progress.PercentComplete);
+                        TimeRemaining = TimeSpan.FromSeconds(totalEstimatedTime - progress.ElapsedTime.TotalSeconds);
+                    }
+                    else
+                    {
+                        TimeRemaining = TimeSpan.Zero;
+                    }
 
-            // Update status message with detailed information
-            if (progress.TotalFiles > 0)
-            {
-                StatusMessage = $"Transferring... {progress.ProcessedFiles}/{progress.TotalFiles} files ({progress.SuccessfulFiles} successful, {progress.FailedFiles} failed)";
-            }
-            else
-            {
-                StatusMessage = "Preparing transfer...";
-            }
+                    // Update status message with detailed information
+                    if (progress.TotalFiles > 0)
+                    {
+                        StatusMessage = $"Transferring... {progress.ProcessedFiles}/{progress.TotalFiles} files ({progress.SuccessfulFiles} successful, {progress.FailedFiles} failed)";
+                    }
+                    else
+                    {
+                        StatusMessage = "Preparing transfer...";
+                    }
+
+                    _logger?.LogDebug("Progress updated: {Percent}% - {Processed}/{Total} files", 
+                        progress.PercentComplete, progress.ProcessedFiles, progress.TotalFiles);
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex, "Error updating enhanced progress");
+                }
+            });
         }
 
         private static string FormatBytes(long bytes)

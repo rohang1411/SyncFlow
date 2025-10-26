@@ -20,7 +20,7 @@ namespace SyncFlow.Views
         private readonly SettingsViewModel _viewModel;
         private readonly ILogger<SettingsWindow>? _logger;
 
-        public SettingsWindow(AppSettings settings, IThemeService themeService, IDialogService dialogService, ILogger<SettingsWindow>? logger = null)
+        public SettingsWindow(AppSettings settings, IThemeService themeService, IDialogService dialogService, IProfileService profileService, ILogger<SettingsWindow>? logger = null, ILogger<SettingsViewModel>? viewModelLogger = null)
         {
             _logger = logger;
             
@@ -31,7 +31,7 @@ namespace SyncFlow.Views
                 
                 InitializeComponent();
 
-                _viewModel = new SettingsViewModel(settings, themeService, dialogService);
+                _viewModel = new SettingsViewModel(settings, themeService, dialogService, profileService, viewModelLogger);
                 _viewModel.SaveRequested += OnSaveRequested;
                 _viewModel.CancelRequested += OnCancelRequested;
 
@@ -50,7 +50,7 @@ namespace SyncFlow.Views
                 try
                 {
                     InitializeComponent();
-                    _viewModel = new SettingsViewModel(settings, themeService, dialogService);
+                    _viewModel = new SettingsViewModel(settings, themeService, dialogService, profileService, viewModelLogger);
                     _viewModel.SaveRequested += OnSaveRequested;
                     _viewModel.CancelRequested += OnCancelRequested;
                     DataContext = _viewModel;
@@ -303,6 +303,48 @@ namespace SyncFlow.Views
                     Hide();
                 }
             }
+        }
+
+        private void OnSettingCardClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try
+            {
+                // Find the ToggleButton within the clicked Border
+                if (sender is System.Windows.Controls.Border border)
+                {
+                    var toggleButton = FindVisualChild<System.Windows.Controls.Primitives.ToggleButton>(border);
+                    if (toggleButton != null)
+                    {
+                        // Toggle the button
+                        toggleButton.IsChecked = !toggleButton.IsChecked;
+                        e.Handled = true;
+                        _logger?.LogDebug("Toggled setting via card click: {Name}", toggleButton.Name);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Error handling setting card click");
+            }
+        }
+
+        private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                {
+                    return typedChild;
+                }
+
+                var childOfChild = FindVisualChild<T>(child);
+                if (childOfChild != null)
+                {
+                    return childOfChild;
+                }
+            }
+            return null;
         }
     }
 }

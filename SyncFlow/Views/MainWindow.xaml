@@ -5,15 +5,15 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:SyncFlow.ViewModels"
     Title="SyncFlow" 
-    Height="700" 
-    Width="1000"
-    MinHeight="500" 
-    MinWidth="800"
+    Height="800" 
+    Width="1200"
+    MinHeight="600" 
+    MinWidth="900"
     WindowStartupLocation="CenterScreen"
-    Background="{DynamicResource WindowBackground}"
+    Background="{DynamicResource WindowBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
     WindowCornerPreference="Round"
-    WindowBackdropType="Mica">
+    WindowBackdropType="None">
     
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
@@ -34,400 +34,542 @@
             ShowClose="True">
         </ui:TitleBar>
 
-        <!-- Main Content -->
-        <Grid Grid.Row="1" Margin="24">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <!-- Main Content with Side Navigation -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Header Section -->
-            <Grid Grid.Row="0" Margin="0,0,0,24">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Title -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBlock 
-                        Text="Transfer Profiles"
-                        FontSize="32"
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource ForegroundPrimary}"/>
-                    <TextBlock 
-                        Text="Manage your file transfer configurations"
-                        FontSize="14"
-                        Foreground="{DynamicResource ForegroundSecondary}"
-                        Margin="0,4,0,0"/>
-                </StackPanel>
-
-                <!-- Action Buttons -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button 
-                        Content="➕ New Profile"
-                        Command="{Binding CreateProfileCommand}"
-                        Background="{DynamicResource ButtonBackground}"
-                        Foreground="{DynamicResource ButtonForeground}"
-                        BorderBrush="{DynamicResource AccentPrimary}"
-                        Padding="16,10"
-                        FontSize="14"
-                        FontWeight="SemiBold"
-                        Margin="0,0,8,0"/>
-                    
-                    <Button 
-                        Content="⚙️"
-                        Command="{Binding OpenSettingsCommand}"
-                        Background="{DynamicResource ButtonSecondaryBackground}"
-                        Foreground="{DynamicResource ForegroundPrimary}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        Padding="12,10"
-                        FontSize="16"
-                        ToolTip="Settings"/>
-                </StackPanel>
-            </Grid>
-
-            <!-- Profiles Content Area -->
-            <ScrollViewer 
-                Grid.Row="1" 
-                VerticalScrollBarVisibility="Auto"
-                HorizontalScrollBarVisibility="Disabled">
-                
-                <Grid>
-                    <!-- Welcome Message (No Profiles) -->
-                    <Border
-                        Visibility="{Binding HasNoProfiles, Converter={StaticResource BoolToVisibility}}"
-                        Background="{DynamicResource CardBackground}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="2"
-                        CornerRadius="12"
-                        Padding="48"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        MaxWidth="500">
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock 
-                                Text="📁"
-                                FontSize="64"
-                                HorizontalAlignment="Center"
-                                Margin="0,0,0,16"/>
-                            <TextBlock 
-                                Text="Welcome to SyncFlow"
-                                FontSize="28"
-                                FontWeight="Bold"
-                                HorizontalAlignment="Center"
-                                Foreground="{DynamicResource ForegroundPrimary}"
-                                Margin="0,0,0,8"/>
-                            <TextBlock 
-                                Text="Get started by creating your first transfer profile"
-                                FontSize="16"
-                                HorizontalAlignment="Center"
-                                TextAlignment="Center"
-                                Foreground="{DynamicResource ForegroundSecondary}"
-                                TextWrapping="Wrap"
-                                Margin="0,0,0,24"/>
-                            <Button
-                                Content="➕ Create Your First Profile"
-                                Command="{Binding CreateProfileCommand}"
-                                Background="{DynamicResource ButtonBackground}"
-                                Foreground="{DynamicResource ButtonForeground}"
-                                BorderBrush="{DynamicResource AccentPrimary}"
-                                Padding="20,12"
-                                FontSize="16"
-                                FontWeight="SemiBold"
-                                HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Profile List -->
-                    <ItemsControl 
-                        ItemsSource="{Binding Profiles}"
-                        Visibility="{Binding HasProfiles, Converter={StaticResource BoolToVisibility}}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
+            <!-- Left Side Navigation Panel -->
+            <Border Grid.Column="0" 
+                    Background="{DynamicResource BackgroundSecondary}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,1,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,24,0,24">
                         
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type vm:ProfileViewModel}">
-                                <!-- Profile Card - Different states handled by DataTriggers -->
-                                <Border
-                                    Background="{DynamicResource CardBackground}"
-                                    BorderBrush="{DynamicResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="12"
-                                    Padding="24"
-                                    Margin="0,0,0,16">
-                                    
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
+                        <!-- App Title -->
+                        <StackPanel Margin="24,0,24,32">
+                            <TextBlock Text="SyncFlow" 
+                                      FontSize="24" 
+                                      FontWeight="Bold" 
+                                      Foreground="{DynamicResource PrimaryTextBrush}"
+                                      Margin="0,0,0,4"/>
+                            <TextBlock Text="File Transfer Utility" 
+                                      FontSize="12" 
+                                      Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        </StackPanel>
 
-                                        <!-- IDLE STATE -->
-                                        <Grid Grid.Row="0" Visibility="{Binding IsIdle, Converter={StaticResource BoolToVisibility}}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
+                        <!-- Navigation Items -->
+                        <StackPanel>
+                            <!-- Transfer Profiles Section -->
+                            <Button Name="TransferButton"
+                                   Click="OnNavigationClick"
+                                   Tag="Transfer"
+                                   Style="{StaticResource NavigationButtonStyle}"
+                                   IsEnabled="True">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📁" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Transfer Profiles" FontSize="14"/>
+                                </StackPanel>
+                            </Button>
 
-                                            <!-- Profile Info -->
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock 
-                                                    Text="{Binding ProfileName}"
-                                                    FontSize="20"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="{DynamicResource ForegroundPrimary}"/>
-                                                <TextBlock 
-                                                    Text="{Binding DestinationFolder}"
-                                                    FontSize="14"
-                                                    Foreground="{DynamicResource ForegroundSecondary}"
-                                                    Margin="0,4,0,0"
-                                                    TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock 
-                                                    Text="{Binding StatusMessage}"
-                                                    FontSize="12"
-                                                    Foreground="{DynamicResource ForegroundTertiary}"
-                                                    Margin="0,8,0,0"/>
-                                            </StackPanel>
+                            <!-- Import/Export Section -->
+                            <Button Name="ImportExportButton"
+                                   Click="OnNavigationClick"
+                                   Tag="ImportExport"
+                                   Style="{StaticResource NavigationButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📤" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Import &amp; Export" FontSize="14"/>
+                                </StackPanel>
+                            </Button>
 
-                                            <!-- Action Buttons -->
-                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                <Button
-                                                    Content="▶️ Run"
-                                                    Command="{Binding RunTransferCommand}"
-                                                    Background="{DynamicResource ButtonBackground}"
-                                                    Foreground="{DynamicResource ButtonForeground}"
-                                                    BorderBrush="{DynamicResource AccentPrimary}"
-                                                    Padding="16,8"
-                                                    FontSize="14"
-                                                    Margin="0,0,8,0"/>
-                                                <Button
-                                                    Content="✏️"
-                                                    Command="{Binding EditCommand}"
-                                                    Background="{DynamicResource ButtonSecondaryBackground}"
-                                                    Foreground="{DynamicResource ForegroundPrimary}"
-                                                    BorderBrush="{DynamicResource BorderBrush}"
-                                                    Padding="12,8"
-                                                    FontSize="14"
-                                                    ToolTip="Edit Profile"
-                                                    Margin="0,0,8,0"/>
-                                                <Button
-                                                    Content="🗑️"
-                                                    Command="{Binding DeleteCommand}"
-                                                    Background="{DynamicResource ButtonDangerBackground}"
-                                                    Foreground="{DynamicResource ButtonForeground}"
-                                                    BorderBrush="{DynamicResource ButtonDangerBackground}"
-                                                    Padding="12,8"
-                                                    FontSize="14"
-                                                    ToolTip="Delete Profile"/>
-                                            </StackPanel>
-                                        </Grid>
+                            <!-- Settings Section -->
+                            <Button Name="SettingsButton"
+                                   Click="OnNavigationClick"
+                                   Tag="Settings"
+                                   Style="{StaticResource NavigationButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="⚙️" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Settings" FontSize="14"/>
+                                </StackPanel>
+                            </Button>
 
-                                        <!-- RUNNING STATE -->
-                                        <Grid Grid.Row="0" Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibility}}">
+                            <!-- About Section -->
+                            <Button Name="AboutButton"
+                                   Click="OnNavigationClick"
+                                   Tag="About"
+                                   Style="{StaticResource NavigationButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="ℹ️" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock Text="About" FontSize="14"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- Quick Actions -->
+                        <StackPanel Margin="24,32,24,0">
+                            <TextBlock Text="Quick Actions" 
+                                      FontSize="12" 
+                                      FontWeight="SemiBold"
+                                      Foreground="{DynamicResource SecondaryTextBrush}"
+                                      Margin="0,0,0,12"/>
+                            
+                            <Button Content="➕ New Profile"
+                                   Command="{Binding CreateProfileCommand}"
+                                   Style="{StaticResource PrimaryButtonStyle}"
+                                   Margin="0,0,0,8"
+                                   HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Right Content Area -->
+            <Grid Grid.Column="1" Margin="32,24,32,24">
+                
+                <!-- Transfer Profiles Content -->
+                <Grid Name="TransferContent" Visibility="Visible">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,24">
+                        <TextBlock Text="Transfer Profiles" 
+                                  FontSize="28" 
+                                  FontWeight="SemiBold" 
+                                  Foreground="{DynamicResource PrimaryTextBrush}"/>
+                        <TextBlock Text="Manage your file transfer configurations" 
+                                  FontSize="14" 
+                                  Foreground="{DynamicResource SecondaryTextBrush}"
+                                  Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <!-- Profiles List -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <!-- Welcome Message (No Profiles) -->
+                            <Border
+                                Visibility="{Binding HasNoProfiles, Converter={StaticResource BoolToVisibility}}"
+                                Background="{DynamicResource CardBackgroundBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="2"
+                                CornerRadius="12"
+                                Padding="48"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                MaxWidth="500">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="📁" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                                    <TextBlock Text="Welcome to SyncFlow" FontSize="24" FontWeight="Bold" 
+                                              HorizontalAlignment="Center" Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Get started by creating your first transfer profile" FontSize="14" 
+                                              HorizontalAlignment="Center" TextAlignment="Center" 
+                                              Foreground="{DynamicResource SecondaryTextBrush}" TextWrapping="Wrap" Margin="0,0,0,24"/>
+                                    <Button Content="➕ Create Your First Profile" Command="{Binding CreateProfileCommand}"
+                                           Style="{StaticResource PrimaryButtonStyle}" Padding="20,12" FontSize="16" 
+                                           FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Profile List -->
+                            <ItemsControl ItemsSource="{Binding Profiles}" Visibility="{Binding HasProfiles, Converter={StaticResource BoolToVisibility}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:ProfileViewModel}">
+                                    <!-- Profile Card -->
+                                    <Border Background="{DynamicResource CardBackgroundBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="12"
+                                            Padding="24"
+                                            Margin="0,0,0,16"
+                                            Style="{StaticResource ProfileCardStyle}">
+                                        
+                                        <Grid>
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
 
-                                            <!-- Header with Cancel Button -->
-                                            <Grid Grid.Row="0">
+                                            <!-- IDLE STATE -->
+                                            <Grid Grid.Row="0" Visibility="{Binding IsIdle, Converter={StaticResource BoolToVisibility}}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock 
-                                                    Grid.Column="0"
-                                                    Text="{Binding ProfileName}"
-                                                    FontSize="20"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="{DynamicResource ForegroundPrimary}"/>
+                                                <!-- Profile Info -->
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="{Binding ProfileName}" FontSize="18" FontWeight="SemiBold" 
+                                                              Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                                    <TextBlock Text="{Binding DestinationFolder}" FontSize="13" 
+                                                              Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,4,0,0" 
+                                                              TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding StatusMessage}" FontSize="12" 
+                                                              Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,8,0,0"/>
+                                                </StackPanel>
 
-                                                <Button
-                                                    Grid.Column="1"
-                                                    Content="⛔ Cancel"
-                                                    Command="{Binding CancelTransferCommand}"
-                                                    Background="{DynamicResource ButtonDangerBackground}"
-                                                    Foreground="{DynamicResource ButtonForeground}"
-                                                    Padding="12,6"
-                                                    FontSize="14"/>
+                                                <!-- Action Buttons -->
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Button Content="▶️ Run" Command="{Binding RunTransferCommand}"
+                                                           Style="{StaticResource PrimaryButtonStyle}" Padding="16,8" 
+                                                           FontSize="14" Margin="0,0,8,0"/>
+                                                    <Button Content="✏️" Command="{Binding EditCommand}"
+                                                           Style="{StaticResource SecondaryButtonStyle}" Padding="12,8" 
+                                                           FontSize="14" ToolTip="Edit Profile" Margin="0,0,8,0"/>
+                                                    <Button Content="🗑️" Command="{Binding DeleteCommand}"
+                                                           Style="{StaticResource DangerButtonStyle}" Padding="12,8" 
+                                                           FontSize="14" ToolTip="Delete Profile"/>
+                                                </StackPanel>
                                             </Grid>
 
-                                            <!-- Current File & Status -->
-                                            <Grid Grid.Row="1" Margin="0,12,0,0">
+                                            <!-- RUNNING STATE -->
+                                            <Grid Grid.Row="0" Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibility}}">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <!-- Header with Cancel Button -->
+                                                <Grid Grid.Row="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0" Text="{Binding ProfileName}" FontSize="18" 
+                                                              FontWeight="SemiBold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+
+                                                    <Button Grid.Column="1" Content="⛔ Cancel" Command="{Binding CancelTransferCommand}"
+                                                           Style="{StaticResource DangerButtonStyle}" Padding="12,6" FontSize="14"/>
+                                                </Grid>
+
+                                                <!-- Current File & Status -->
+                                                <Grid Grid.Row="1" Margin="0,12,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0" Text="{Binding CurrentFile}" FontSize="13" 
+                                                              Foreground="{DynamicResource SecondaryTextBrush}" TextTrimming="CharacterEllipsis"/>
+
+                                                    <TextBlock Grid.Column="1" Text="{Binding ProgressText}" FontSize="13" 
+                                                              Foreground="{DynamicResource SecondaryTextBrush}" Margin="8,0,0,0"/>
+                                                </Grid>
+
+                                                <!-- Progress Bar -->
+                                                <ProgressBar Grid.Row="2" Value="{Binding ProgressPercentage, Mode=OneWay}" Maximum="100" 
+                                                            Height="8" Margin="0,8,0,0" Style="{StaticResource ModernProgressBar}"/>
+
+                                                <!-- Transfer Stats -->
+                                                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
+                                                    <TextBlock Text="{Binding TransferSpeedText}" FontSize="12" 
+                                                              Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,16,0"/>
+                                                    <TextBlock Text="{Binding FileProgressText}" FontSize="12" 
+                                                              Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,16,0"/>
+                                                    <TextBlock Text="{Binding TimeElapsedText}" FontSize="12" 
+                                                              Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!-- COMPLETED/FAILED STATE -->
+                                            <Grid Grid.Row="0" Visibility="{Binding IsCompleted, Converter={StaticResource BoolToVisibility}}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock 
-                                                    Grid.Column="0"
-                                                    Text="{Binding CurrentFile}"
-                                                    FontSize="14"
-                                                    Foreground="{DynamicResource ForegroundSecondary}"
-                                                    TextTrimming="CharacterEllipsis"/>
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="{Binding ProfileName}" FontSize="18" FontWeight="SemiBold" 
+                                                              Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                                    <TextBlock Text="✅ Transfer completed successfully" FontSize="13" 
+                                                              Foreground="#4CAF50" Margin="0,4,0,0"/>
+                                                    <TextBlock Text="{Binding DetailedProgressText}" FontSize="12" 
+                                                              Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,4,0,0"/>
+                                                </StackPanel>
 
-                                                <TextBlock 
-                                                    Grid.Column="1"
-                                                    Text="{Binding ProgressText}"
-                                                    FontSize="14"
-                                                    Foreground="{DynamicResource ForegroundSecondary}"
-                                                    Margin="8,0,0,0"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Button Content="▶️ Run Again" Command="{Binding RunTransferCommand}"
+                                                           Style="{StaticResource PrimaryButtonStyle}" Padding="16,8" 
+                                                           FontSize="14" Margin="0,0,8,0"/>
+                                                    <Button Content="✏️" Command="{Binding EditCommand}"
+                                                           Style="{StaticResource SecondaryButtonStyle}" Padding="12,8" 
+                                                           FontSize="14" ToolTip="Edit Profile"/>
+                                                </StackPanel>
                                             </Grid>
-
-                                            <!-- Progress Bar -->
-                                            <ProgressBar
-                                                Grid.Row="2"
-                                                Value="{Binding ProgressPercentage, Mode=OneWay}"
-                                                Maximum="100"
-                                                Height="8"
-                                                Margin="0,8,0,0"
-                                                Background="{DynamicResource ProgressBarBackground}"
-                                                Foreground="{DynamicResource ProgressBarForeground}"
-                                                BorderThickness="0"/>
-
-                                            <!-- Transfer Stats -->
-                                            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
-                                                <TextBlock 
-                                                    Text="{Binding TransferSpeedText}"
-                                                    FontSize="12"
-                                                    Foreground="{DynamicResource ForegroundTertiary}"
-                                                    Margin="0,0,16,0"/>
-                                                <TextBlock 
-                                                    Text="{Binding TimeElapsedText}"
-                                                    FontSize="12"
-                                                    Foreground="{DynamicResource ForegroundTertiary}"
-                                                    Margin="0,0,16,0"/>
-                                                <TextBlock 
-                                                    Text="{Binding StatusMessage}"
-                                                    FontSize="12"
-                                                    Foreground="{DynamicResource ForegroundTertiary}"/>
-                                            </StackPanel>
                                         </Grid>
-
-                                        <!-- COMPLETED STATE -->
-                                        <Grid Grid.Row="0" Visibility="{Binding IsCompleted, Converter={StaticResource BoolToVisibility}}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- Success Icon -->
-                                            <Border 
-                                                Grid.Column="0"
-                                                Background="{DynamicResource SuccessColor}"
-                                                CornerRadius="20"
-                                                Width="40"
-                                                Height="40"
-                                                VerticalAlignment="Center"
-                                                Margin="0,0,16,0">
-                                                <TextBlock 
-                                                    Text="✓"
-                                                    FontSize="24"
-                                                    FontWeight="Bold"
-                                                    Foreground="White"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"/>
-                                            </Border>
-
-                                            <!-- Success Message -->
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock 
-                                                    Text="{Binding ProfileName}"
-                                                    FontSize="20"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="{DynamicResource ForegroundPrimary}"/>
-                                                <TextBlock 
-                                                    Text="{Binding StatusMessage}"
-                                                    FontSize="14"
-                                                    Foreground="{DynamicResource SuccessColor}"
-                                                    FontWeight="SemiBold"
-                                                    Margin="0,4,0,0"/>
-                                            </StackPanel>
-
-                                            <!-- Reset Button -->
-                                            <Button
-                                                Grid.Column="2"
-                                                Content="↺ Reset"
-                                                Command="{Binding ResetCommand}"
-                                                Background="{DynamicResource ButtonSecondaryBackground}"
-                                                Foreground="{DynamicResource ForegroundPrimary}"
-                                                Padding="12,8"
-                                                FontSize="14"/>
-                                        </Grid>
-
-                                        <!-- FAILED STATE -->
-                                        <Grid Grid.Row="0" Visibility="{Binding IsFailed, Converter={StaticResource BoolToVisibility}}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- Error Icon -->
-                                            <Border 
-                                                Grid.Column="0"
-                                                Background="{DynamicResource ErrorColor}"
-                                                CornerRadius="20"
-                                                Width="40"
-                                                Height="40"
-                                                VerticalAlignment="Center"
-                                                Margin="0,0,16,0">
-                                                <TextBlock 
-                                                    Text="✕"
-                                                    FontSize="24"
-                                                    FontWeight="Bold"
-                                                    Foreground="White"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"/>
-                                            </Border>
-
-                                            <!-- Error Message -->
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock 
-                                                    Text="{Binding ProfileName}"
-                                                    FontSize="20"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="{DynamicResource ForegroundPrimary}"/>
-                                                <TextBlock 
-                                                    Text="{Binding StatusMessage}"
-                                                    FontSize="14"
-                                                    Foreground="{DynamicResource ErrorColor}"
-                                                    FontWeight="SemiBold"
-                                                    Margin="0,4,0,0"/>
-                                                <TextBlock 
-                                                    Text="{Binding ErrorMessage}"
-                                                    FontSize="12"
-                                                    Foreground="{DynamicResource ForegroundSecondary}"
-                                                    TextWrapping="Wrap"
-                                                    Margin="0,4,0,0"/>
-                                            </StackPanel>
-
-                                            <!-- Retry Button -->
-                                            <Button
-                                                Grid.Column="2"
-                                                Content="↺ Retry"
-                                                Command="{Binding RunTransferCommand}"
-                                                Background="{DynamicResource ButtonBackground}"
-                                                Foreground="{DynamicResource ButtonForeground}"
-                                                Padding="12,8"
-                                                FontSize="14"/>
-                                        </Grid>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        </Grid>
+                    </ScrollViewer>
                 </Grid>
-            </ScrollViewer>
+
+                <!-- Import/Export Content -->
+                <Grid Name="ImportExportContent" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="Import &amp; Export Profiles" FontSize="28" FontWeight="SemiBold" 
+                                  Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                        <TextBlock Text="Backup and restore your profile configurations" FontSize="14" 
+                                  Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,32"/>
+                        
+                        <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}"
+                               BorderThickness="1" CornerRadius="12" Padding="32" MaxWidth="600" HorizontalAlignment="Left">
+                            <StackPanel>
+                                <TextBlock Text="Profile Management" FontSize="20" FontWeight="SemiBold" 
+                                          Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,16"/>
+                                
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                                    <Button Content="📤 Export Profiles" Command="{Binding ExportProfilesCommand}"
+                                           Style="{StaticResource PrimaryButtonStyle}" Padding="20,12" Margin="0,0,16,0"/>
+                                    <Button Content="📥 Import Profiles" Command="{Binding ImportProfilesCommand}"
+                                           Style="{StaticResource SecondaryButtonStyle}" Padding="20,12"/>
+                                </StackPanel>
+                                
+                                <TextBlock Text="Export your profiles to backup your configurations or share them with others. Import profiles to restore from a backup or add configurations from another device." 
+                                          FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Settings Content -->
+                <Grid Name="SettingsContent" Visibility="Collapsed">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel MaxWidth="800" HorizontalAlignment="Left">
+                            <TextBlock Text="Settings" FontSize="28" FontWeight="SemiBold" 
+                                      Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Text="Customize your SyncFlow experience" FontSize="14" 
+                                      Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,32"/>
+                            
+                            <!-- Settings sections will be loaded here -->
+                            <ContentPresenter Name="SettingsContentPresenter"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+
+                <!-- About Content -->
+                <Grid Name="AboutContent" Visibility="Collapsed">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel MaxWidth="800" HorizontalAlignment="Center" Margin="0,20,0,40">
+                            <!-- Hero Section -->
+                            <Border Background="{DynamicResource CardBackgroundBrush}" 
+                                   BorderBrush="{DynamicResource AccentPrimary}" 
+                                   BorderThickness="2" 
+                                   CornerRadius="16" 
+                                   Padding="48,40" 
+                                   Margin="0,0,0,32">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <!-- App Icon -->
+                                    <Border Background="{DynamicResource AccentPrimary}" 
+                                           Width="80" Height="80" 
+                                           CornerRadius="20" 
+                                           Margin="0,0,0,24">
+                                        <TextBlock Text="📁" FontSize="40" 
+                                                  HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center"/>
+                                    </Border>
+                                    <!-- App Name -->
+                                    <TextBlock Text="SyncFlow" 
+                                              FontSize="36" 
+                                              FontWeight="Bold" 
+                                              Foreground="{DynamicResource PrimaryTextBrush}" 
+                                              HorizontalAlignment="Center" 
+                                              Margin="0,0,0,8"/>
+                                    <!-- Version Badge -->
+                                    <Border Background="{DynamicResource AccentPrimary}" 
+                                           CornerRadius="12" 
+                                           Padding="12,6" 
+                                           Margin="0,0,0,16">
+                                        <TextBlock Text="Version 1.1.0" 
+                                                  FontSize="12" 
+                                                  FontWeight="SemiBold" 
+                                                  Foreground="White" 
+                                                  HorizontalAlignment="Center"/>
+                                    </Border>
+                                    <!-- Tagline -->
+                                    <TextBlock Text="Professional File Transfer &amp; Backup Utility" 
+                                              FontSize="16" 
+                                              Foreground="{DynamicResource SecondaryTextBrush}" 
+                                              HorizontalAlignment="Center" 
+                                              Margin="0,0,0,24"/>
+                                    <!-- Description -->
+                                    <TextBlock Text="Effortlessly sync files between your computer and mobile devices with real-time progress tracking, advanced folder mapping, and modern design." 
+                                              FontSize="14" 
+                                              Foreground="{DynamicResource SecondaryTextBrush}" 
+                                              TextWrapping="Wrap" 
+                                              TextAlignment="Center" 
+                                              LineHeight="22" 
+                                              MaxWidth="500"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Features Grid -->
+                            <Grid Margin="0,0,0,32">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <!-- Feature Card 1 -->
+                                <Border Grid.Row="0" Grid.Column="0" 
+                                       Background="{DynamicResource CardBackgroundBrush}" 
+                                       BorderBrush="{DynamicResource BorderBrush}" 
+                                       BorderThickness="1" 
+                                       CornerRadius="12" 
+                                       Padding="24" 
+                                       Margin="0,0,8,16">
+                                    <StackPanel>
+                                        <TextBlock Text="📱" FontSize="24" Margin="0,0,0,12"/>
+                                        <TextBlock Text="Mobile Support" FontSize="16" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Direct access to smartphone folders via MTP protocol" 
+                                                  FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" 
+                                                  TextWrapping="Wrap" LineHeight="18"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Feature Card 2 -->
+                                <Border Grid.Row="0" Grid.Column="1" 
+                                       Background="{DynamicResource CardBackgroundBrush}" 
+                                       BorderBrush="{DynamicResource BorderBrush}" 
+                                       BorderThickness="1" 
+                                       CornerRadius="12" 
+                                       Padding="24" 
+                                       Margin="8,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="⚡" FontSize="24" Margin="0,0,0,12"/>
+                                        <TextBlock Text="Real-time Progress" FontSize="16" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Live transfer speed, file count, and progress tracking" 
+                                                  FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" 
+                                                  TextWrapping="Wrap" LineHeight="18"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Feature Card 3 -->
+                                <Border Grid.Row="1" Grid.Column="0" 
+                                       Background="{DynamicResource CardBackgroundBrush}" 
+                                       BorderBrush="{DynamicResource BorderBrush}" 
+                                       BorderThickness="1" 
+                                       CornerRadius="12" 
+                                       Padding="24" 
+                                       Margin="0,0,8,16">
+                                    <StackPanel>
+                                        <TextBlock Text="🎨" FontSize="24" Margin="0,0,0,12"/>
+                                        <TextBlock Text="Modern Design" FontSize="16" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Windows 11 Fluent Design with smooth animations" 
+                                                  FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" 
+                                                  TextWrapping="Wrap" LineHeight="18"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Feature Card 4 -->
+                                <Border Grid.Row="1" Grid.Column="1" 
+                                       Background="{DynamicResource CardBackgroundBrush}" 
+                                       BorderBrush="{DynamicResource BorderBrush}" 
+                                       BorderThickness="1" 
+                                       CornerRadius="12" 
+                                       Padding="24" 
+                                       Margin="8,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="🔄" FontSize="24" Margin="0,0,0,12"/>
+                                        <TextBlock Text="Smart Mapping" FontSize="16" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Advanced source to destination folder mapping" 
+                                                  FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" 
+                                                  TextWrapping="Wrap" LineHeight="18"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Feature Card 5 -->
+                                <Border Grid.Row="2" Grid.Column="0" 
+                                       Background="{DynamicResource CardBackgroundBrush}" 
+                                       BorderBrush="{DynamicResource BorderBrush}" 
+                                       BorderThickness="1" 
+                                       CornerRadius="12" 
+                                       Padding="24" 
+                                       Margin="0,0,8,0">
+                                    <StackPanel>
+                                        <TextBlock Text="💾" FontSize="24" Margin="0,0,0,12"/>
+                                        <TextBlock Text="Profile Management" FontSize="16" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Save, import, and export transfer configurations" 
+                                                  FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" 
+                                                  TextWrapping="Wrap" LineHeight="18"/>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <!-- Feature Card 6 -->
+                                <Border Grid.Row="2" Grid.Column="1" 
+                                       Background="{DynamicResource CardBackgroundBrush}" 
+                                       BorderBrush="{DynamicResource BorderBrush}" 
+                                       BorderThickness="1" 
+                                       CornerRadius="12" 
+                                       Padding="24" 
+                                       Margin="8,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="🛡️" FontSize="24" Margin="0,0,0,12"/>
+                                        <TextBlock Text="File Verification" FontSize="16" FontWeight="SemiBold" 
+                                                  Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,8"/>
+                                        <TextBlock Text="Automatic verification and detailed transfer reports" 
+                                                  FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" 
+                                                  TextWrapping="Wrap" LineHeight="18"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            
+                            <!-- Links Section -->
+                            <Border Background="{DynamicResource CardBackgroundBrush}" 
+                                   BorderBrush="{DynamicResource BorderBrush}" 
+                                   BorderThickness="1" 
+                                   CornerRadius="12" 
+                                   Padding="32">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="🔗 Connect &amp; Contribute" 
+                                              FontSize="20" 
+                                              FontWeight="SemiBold" 
+                                              Foreground="{DynamicResource PrimaryTextBrush}" 
+                                              HorizontalAlignment="Center" 
+                                              Margin="0,0,0,20"/>
+                                    <Button Content="🌟 View on GitHub" 
+                                           Click="OnGitHubClick"
+                                           Style="{StaticResource PrimaryButtonStyle}" 
+                                           Padding="24,12" 
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" 
+                                           Margin="0,0,0,16"/>
+                                    <TextBlock Text="https://github.com/rohang1411/SyncFlow" 
+                                              FontSize="12" 
+                                              Foreground="{DynamicResource SecondaryTextBrush}"
+                                              HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

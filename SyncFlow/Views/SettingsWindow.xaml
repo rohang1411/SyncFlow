@@ -4,15 +4,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Settings"
-    Height="600"
-    Width="550"
-    MinHeight="400"
-    MaxHeight="800"
+    Height="750"
+    Width="650"
+    MinHeight="600"
+    MaxHeight="900"
     WindowStartupLocation="CenterOwner"
-    Background="{StaticResource WindowBackgroundBrush}"
+    Background="{DynamicResource WindowBackgroundBrush}"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
+    ExtendsContentIntoTitleBar="True"
     ResizeMode="CanResize">
+    
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
     
     <Grid Margin="24">
         <Grid.RowDefinitions>
@@ -25,14 +30,14 @@
         <StackPanel Grid.Row="0" Margin="0,0,0,24">
             <TextBlock 
                 Text="⚙️ Settings"
-                FontSize="28"
+                FontSize="32"
                 FontWeight="SemiBold"
-                Foreground="{StaticResource PrimaryTextBrush}"/>
+                Foreground="{DynamicResource PrimaryTextBrush}"/>
             <TextBlock 
                 Text="Customize your SyncFlow experience"
                 FontSize="14"
-                Foreground="{StaticResource SecondaryTextBrush}"
-                Margin="0,4,0,0"/>
+                Foreground="{DynamicResource SecondaryTextBrush}"
+                Margin="0,6,0,0"/>
         </StackPanel>
 
         <!-- Settings Content with ScrollViewer -->
@@ -40,39 +45,46 @@
                      VerticalScrollBarVisibility="Auto"
                      Margin="0,0,0,20">
             <StackPanel>
-                
+                <!-- Appearance Section -->
+                <TextBlock Text="🎨 Appearance" 
+                          FontSize="20" 
+                          FontWeight="SemiBold" 
+                          Foreground="{DynamicResource PrimaryTextBrush}"
+                          Margin="0,0,0,16"/>
+
                 <!-- Theme Setting -->
                 <Border
-                    Background="{StaticResource CardBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Padding="16"
-                    Margin="0,0,0,16">
+                    Padding="20"
+                    Margin="0,0,0,12"
+                    Cursor="Hand"
+                    MouseLeftButtonDown="OnSettingCardClick">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-
                         <StackPanel Grid.Column="0">
                             <TextBlock 
-                                Text="🌓 Theme"
+                                Text="🌓 Dark Mode"
                                 FontSize="16"
                                 FontWeight="SemiBold"
-                                Foreground="{StaticResource PrimaryTextBrush}"/>
+                                Foreground="{DynamicResource PrimaryTextBrush}"/>
                             <TextBlock 
-                                Text="Choose between light and dark mode"
-                                FontSize="12"
-                                Foreground="{StaticResource SecondaryTextBrush}"
+                                Text="Switch between light and dark theme"
+                                FontSize="13"
+                                Foreground="{DynamicResource SecondaryTextBrush}"
                                 Margin="0,4,0,0"/>
                         </StackPanel>
-
                         <ToggleButton 
+                            x:Name="DarkModeToggle"
                             Grid.Column="1"
                             IsChecked="{Binding IsDarkMode}"
                             Width="60"
-                            Height="30"
+                            Height="32"
                             VerticalAlignment="Center"
                             Style="{StaticResource AnimatedToggleButtonStyle}"/>
                     </Grid>
@@ -80,125 +92,270 @@
 
                 <!-- Transparency Setting -->
                 <Border
-                    Background="{StaticResource CardBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="8"
-                    Padding="16"
-                    Margin="0,0,0,16">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
-                            <TextBlock 
-                                Text="✨ Window Transparency"
-                                FontSize="16"
-                                FontWeight="SemiBold"
-                                Foreground="{StaticResource PrimaryTextBrush}"/>
-                            <TextBlock 
-                                Text="Enable acrylic/mica background effect"
-                                FontSize="12"
-                                Foreground="{StaticResource SecondaryTextBrush}"
-                                Margin="0,4,0,0"/>
-                        </StackPanel>
-
-                        <ToggleButton 
-                            Grid.Column="1"
-                            IsChecked="{Binding IsTransparencyEnabled}"
-                            Width="60"
-                            Height="30"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource AnimatedToggleButtonStyle}"/>
-                    </Grid>
-                </Border>
-
-                <!-- Glass Effect Setting -->
-                <Border
-                    Background="{StaticResource CardBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="16"
-                    Margin="0,0,0,16">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
-                            <TextBlock 
-                                Text="💎 Glass Effect"
-                                FontSize="16"
-                                FontWeight="SemiBold"
-                                Foreground="{StaticResource PrimaryTextBrush}"/>
-                            <TextBlock 
-                                Text="Enable modern glass/liquid glass visual effect"
-                                FontSize="12"
-                                Foreground="{StaticResource SecondaryTextBrush}"
-                                Margin="0,4,0,0"/>
-                        </StackPanel>
-
-                        <ToggleButton 
-                            Grid.Column="1"
-                            IsChecked="{Binding EnableGlassEffect}"
-                            Width="60"
-                            Height="30"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource AnimatedToggleButtonStyle}"/>
-                    </Grid>
-                </Border>
-
-                <!-- Storage Path Setting -->
-                <Border
-                    Background="{StaticResource CardBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="16">
+                    Padding="20"
+                    Margin="0,0,0,12"
+                    Cursor="Hand"
+                    MouseLeftButtonDown="OnSettingCardClick">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-
-                        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Row="0" Grid.Column="0">
                             <TextBlock 
-                                Text="📁 Profile Storage Location"
+                                Text="✨ Window Transparency"
                                 FontSize="16"
                                 FontWeight="SemiBold"
-                                Foreground="{StaticResource PrimaryTextBrush}"/>
+                                Foreground="{DynamicResource PrimaryTextBrush}"/>
                             <TextBlock 
-                                Text="Choose where profile data is stored"
-                                FontSize="12"
-                                Foreground="{StaticResource SecondaryTextBrush}"
+                                Text="Enable acrylic background effect"
+                                FontSize="13"
+                                Foreground="{DynamicResource SecondaryTextBrush}"
                                 Margin="0,4,0,0"/>
                         </StackPanel>
+                        <ToggleButton 
+                            x:Name="TransparencyToggle"
+                            Grid.Row="0" Grid.Column="1"
+                            IsChecked="{Binding IsTransparencyEnabled}"
+                            Width="60"
+                            Height="32"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource AnimatedToggleButtonStyle}"/>
+                        
+                        <!-- Transparency Amount Slider -->
+                        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" 
+                                   Margin="0,16,0,0"
+                                   Visibility="{Binding IsTransparencySliderEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="Transparency Amount" 
+                                      FontSize="13" 
+                                      FontWeight="Medium"
+                                      Foreground="{DynamicResource PrimaryTextBrush}"
+                                      Margin="0,0,0,8"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Slider Grid.Column="0"
+                                       Value="{Binding TransparencyAmount}"
+                                       Minimum="10"
+                                       Maximum="100"
+                                       TickFrequency="10"
+                                       IsSnapToTickEnabled="True"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,16,0"/>
+                                <TextBlock Grid.Column="1"
+                                          Text="{Binding TransparencyAmount, StringFormat={}{0:F0}%}"
+                                          FontSize="14"
+                                          FontWeight="SemiBold"
+                                          Foreground="{DynamicResource PrimaryTextBrush}"
+                                          VerticalAlignment="Center"
+                                          MinWidth="45"
+                                          TextAlignment="Right"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
+                <!-- Glass Effect Setting -->
+                <Border
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20"
+                    Margin="0,0,0,28"
+                    Cursor="Hand"
+                    MouseLeftButtonDown="OnSettingCardClick">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock 
+                                Text="💎 Glass Effect"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            <TextBlock 
+                                Text="Enable modern glass/liquid glass visual effect"
+                                FontSize="13"
+                                Foreground="{DynamicResource SecondaryTextBrush}"
+                                Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <ToggleButton 
+                            x:Name="GlassEffectToggle"
+                            Grid.Column="1"
+                            IsChecked="{Binding EnableGlassEffect}"
+                            Width="60"
+                            Height="32"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource AnimatedToggleButtonStyle}"/>
+                    </Grid>
+                </Border>
+
+                <!-- Profile Management Section -->
+                <TextBlock Text="📁 Profile Management" 
+                          FontSize="20" 
+                          FontWeight="SemiBold" 
+                          Foreground="{DynamicResource PrimaryTextBrush}"
+                          Margin="0,0,0,16"/>
+
+                <!-- Storage Path Setting -->
+                <Border
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20"
+                    Margin="0,0,0,12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                            <TextBlock 
+                                Text="📂 Storage Location"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            <TextBlock 
+                                Text="Choose where profile data is stored"
+                                FontSize="13"
+                                Foreground="{DynamicResource SecondaryTextBrush}"
+                                Margin="0,4,0,0"/>
+                        </StackPanel>
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
                             <TextBox Grid.Column="0"
                                     Text="{Binding ProfileStoragePath}"
                                     IsReadOnly="True"
                                     Style="{StaticResource ModernTextBoxStyle}"
                                     VerticalAlignment="Center"
-                                    Margin="0,0,8,0"/>
-
+                                    Margin="0,0,12,0"/>
                             <Button Grid.Column="1"
                                    Content="Browse..."
                                    Command="{Binding BrowseStoragePathCommand}"
                                    Style="{StaticResource SecondaryButtonStyle}"
-                                   Padding="16,8"
+                                   Padding="20,10"
                                    VerticalAlignment="Center"/>
                         </Grid>
                     </Grid>
+                </Border>
+
+                <!-- Import/Export Section -->
+                <Border
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20"
+                    Margin="0,0,0,28">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                            <TextBlock 
+                                Text="📤 Import &amp; Export"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            <TextBlock 
+                                Text="Backup and restore your profile configurations"
+                                FontSize="13"
+                                Foreground="{DynamicResource SecondaryTextBrush}"
+                                Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <Button Content="📤 Export Profiles"
+                                   Command="{Binding ExportProfilesCommand}"
+                                   Style="{StaticResource PrimaryButtonStyle}"
+                                   Padding="20,10"
+                                   Margin="0,0,12,0"/>
+                            <Button Content="📥 Import Profiles"
+                                   Command="{Binding ImportProfilesCommand}"
+                                   Style="{StaticResource SecondaryButtonStyle}"
+                                   Padding="20,10"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- About Section -->
+                <TextBlock Text="ℹ️ About" 
+                          FontSize="20" 
+                          FontWeight="SemiBold" 
+                          Foreground="{DynamicResource PrimaryTextBrush}"
+                          Margin="0,0,0,16"/>
+                <Border
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24">
+                    <StackPanel>
+                        <TextBlock Text="SyncFlow" 
+                                  FontSize="24" 
+                                  FontWeight="Bold" 
+                                  Foreground="{DynamicResource PrimaryTextBrush}"
+                                  Margin="0,0,0,8"/>
+                        <TextBlock Text="Version 1.1.0" 
+                                  FontSize="14" 
+                                  Foreground="{DynamicResource SecondaryTextBrush}"
+                                  Margin="0,0,0,12"/>
+                        <TextBlock Text="A modern, professional file transfer utility with advanced folder mapping capabilities and real-time progress tracking." 
+                                  FontSize="13" 
+                                  Foreground="{DynamicResource SecondaryTextBrush}"
+                                  TextWrapping="Wrap"
+                                  LineHeight="20"
+                                  Margin="0,0,0,16"/>
+                        <TextBlock Text="Key Features:" 
+                                  FontSize="14" 
+                                  FontWeight="SemiBold"
+                                  Foreground="{DynamicResource PrimaryTextBrush}"
+                                  Margin="0,0,0,8"/>
+                        <StackPanel Margin="12,0,0,0">
+                            <TextBlock Text="• Source → Destination folder mapping" 
+                                      FontSize="12" 
+                                      Foreground="{DynamicResource SecondaryTextBrush}"
+                                      Margin="0,0,0,4"/>
+                            <TextBlock Text="• Real-time transfer progress with speed monitoring" 
+                                      FontSize="12" 
+                                      Foreground="{DynamicResource SecondaryTextBrush}"
+                                      Margin="0,0,0,4"/>
+                            <TextBlock Text="• File verification and detailed reporting" 
+                                      FontSize="12" 
+                                      Foreground="{DynamicResource SecondaryTextBrush}"
+                                      Margin="0,0,0,4"/>
+                            <TextBlock Text="• Profile import/export for easy backup" 
+                                      FontSize="12" 
+                                      Foreground="{DynamicResource SecondaryTextBrush}"
+                                      Margin="0,0,0,4"/>
+                            <TextBlock Text="• Modern Fluent Design UI with animations" 
+                                      FontSize="12" 
+                                      Foreground="{DynamicResource SecondaryTextBrush}"
+                                      Margin="0,0,0,4"/>
+                            <TextBlock Text="• Storage validation and space checking" 
+                                      FontSize="12" 
+                                      Foreground="{DynamicResource SecondaryTextBrush}"
+                                      Margin="0,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
                 </Border>
             </StackPanel>
         </ScrollViewer>
@@ -209,14 +366,15 @@
                 Content="💾 Save"
                 Command="{Binding SaveCommand}"
                 Style="{StaticResource PrimaryButtonStyle}"
-                Padding="20,10"
+                Padding="24,12"
                 FontSize="14"
+                FontWeight="SemiBold"
                 Margin="0,0,12,0"/>
             <Button
                 Content="Cancel"
                 Command="{Binding CancelCommand}"
                 Style="{StaticResource SecondaryButtonStyle}"
-                Padding="20,10"
+                Padding="24,12"
                 FontSize="14"/>
         </StackPanel>
     </Grid>

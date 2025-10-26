@@ -70,6 +70,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<Models.AppSettings>();
         
         // Register services
+        services.AddSingleton<IEnhancedFolderBrowserService, EnhancedFolderBrowserService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IProfileService, ProfileService>();
         services.AddSingleton<IFileOperations, WindowsFileOperations>();

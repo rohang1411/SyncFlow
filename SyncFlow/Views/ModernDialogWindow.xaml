@@ -14,6 +14,7 @@
     Background="{DynamicResource WindowBackgroundBrush}"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round"
+    ExtendsContentIntoTitleBar="True"
     ShowInTaskbar="False">
     
     <Grid Margin="24">

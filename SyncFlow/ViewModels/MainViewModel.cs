@@ -213,24 +213,38 @@ namespace SyncFlow.ViewModels
         {
             try
             {
+                _logger?.LogInformation("Delete requested for profile: {ProfileName} (ID: {ProfileId})", 
+                    profileViewModel.ProfileName, profileViewModel.Id);
+
                 var result = _dialogService.ShowWarning(
                     $"Are you sure you want to delete the profile '{profileViewModel.ProfileName}'?",
                     "Confirm Delete",
                     System.Windows.MessageBoxButton.YesNo);
 
+                _logger?.LogInformation("User response to delete confirmation: {Result}", result);
+
                 if (result == System.Windows.MessageBoxResult.Yes)
                 {
+                    _logger?.LogInformation("Deleting profile from service: {ProfileName}", profileViewModel.ProfileName);
                     await _profileService.DeleteProfileAsync(profileViewModel.Id);
+                    
+                    _logger?.LogInformation("Removing profile from UI collection");
                     Profiles.Remove(profileViewModel);
 
                     OnPropertyChanged(nameof(HasProfiles));
                     OnPropertyChanged(nameof(HasNoProfiles));
 
+                    _logger?.LogInformation("Profile deleted successfully: {ProfileName}", profileViewModel.ProfileName);
                     _dialogService.ShowSuccess("Profile deleted successfully", "Success");
+                }
+                else
+                {
+                    _logger?.LogInformation("Profile deletion cancelled by user");
                 }
             }
             catch (Exception ex)
             {
+                _logger?.LogError(ex, "Failed to delete profile: {ProfileName}", profileViewModel.ProfileName);
                 _dialogService.ShowError($"Failed to delete profile: {ex.Message}", "Error");
             }
         }

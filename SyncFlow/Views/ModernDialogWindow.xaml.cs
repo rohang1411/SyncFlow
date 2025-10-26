@@ -1,8 +1,10 @@
+using System;
 using System.Windows;
 using System.Windows.Media;
 using Wpf.Ui.Controls;
 using MessageBoxResult = System.Windows.MessageBoxResult;
 using Color = System.Windows.Media.Color;
+using Point = System.Windows.Point;
 
 namespace SyncFlow.Views;
 
@@ -13,8 +15,26 @@ public partial class ModernDialogWindow : FluentWindow
 {
     public ModernDialogWindow()
     {
+        // CRITICAL: Set ExtendsContentIntoTitleBar BEFORE InitializeComponent to prevent backdrop errors
+        ExtendsContentIntoTitleBar = true;
+        
         InitializeComponent();
         DataContext = this;
+        
+        // Apply fade-in animation (Window cannot have RenderTransform)
+        Opacity = 0;
+        
+        Loaded += (s, e) =>
+        {
+            // Simple fade-in animation for window
+            var fadeIn = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(250)
+            };
+            BeginAnimation(OpacityProperty, fadeIn);
+        };
     }
 
     public string Title { get; set; } = "Dialog";
