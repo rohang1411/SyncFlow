@@ -1,0 +1,148 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., 2.0.0)'
+        required: true
+        default: '2.0.0'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Get version
+      id: get_version
+      run: |
+        if ("${{ github.event_name }}" -eq "push") {
+          $version = "${{ github.ref_name }}" -replace '^v', ''
+        } else {
+          $version = "${{ github.event.inputs.version }}"
+        }
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+        echo "Building version: $version"
+      shell: pwsh
+      
+    - name: Update project version
+      run: |
+        $version = "${{ steps.get_version.outputs.VERSION }}"
+        $projectFile = "SyncFlow/SyncFlow.csproj"
+        $content = Get-Content $projectFile -Raw
+        $content = $content -replace '<Version>[\d\.]+</Version>', "<Version>$version</Version>"
+        $content = $content -replace '<AssemblyVersion>[\d\.]+\.0</AssemblyVersion>', "<AssemblyVersion>$version.0</AssemblyVersion>"
+        $content = $content -replace '<FileVersion>[\d\.]+\.0</FileVersion>', "<FileVersion>$version.0</FileVersion>"
+        $content = $content -replace '<InformationalVersion>[\d\.]+</InformationalVersion>', "<InformationalVersion>$version</InformationalVersion>"
+        Set-Content $projectFile -Value $content
+      shell: pwsh
+      
+    - name: Restore dependencies
+      run: dotnet restore SyncFlow/SyncFlow.csproj
+      
+    - name: Run tests
+      run: dotnet test SyncFlow.Tests/SyncFlow.Tests.csproj --configuration Release --logger trx --results-directory TestResults
+      continue-on-error: true
+      
+    - name: Build Release
+      run: dotnet build SyncFlow/SyncFlow.csproj --configuration Release --no-restore
+      
+    - name: Publish Windows x64
+      run: |
+        dotnet publish SyncFlow/SyncFlow.csproj `
+          --configuration Release `
+          --runtime win-x64 `
+          --self-contained true `
+          --output publish/win-x64 `
+          -p:PublishSingleFile=true `
+          -p:PublishReadyToRun=true `
+          -p:PublishTrimmed=false `
+          -p:IncludeNativeLibrariesForSelfExtract=true
+      
+    - name: Create release artifacts
+      run: |
+        $version = "${{ steps.get_version.outputs.VERSION }}"
+        
+        # Create release directory
+        New-Item -ItemType Directory -Path "release" -Force
+        
+        # Create ZIP package
+        Compress-Archive -Path "publish/win-x64/*" -DestinationPath "release/SyncFlow-v$version-win-x64.zip"
+        
+        # Copy standalone executable
+        Copy-Item "publish/win-x64/SyncFlow.exe" "release/SyncFlow-v$version-win-x64.exe"
+        
+        # Get file sizes for release notes
+        $zipSize = [math]::Round((Get-Item "release/SyncFlow-v$version-win-x64.zip").Length / 1MB, 2)
+        $exeSize = [math]::Round((Get-Item "release/SyncFlow-v$version-win-x64.exe").Length / 1MB, 2)
+        
+        echo "ZIP_SIZE=$zipSize" >> $env:GITHUB_OUTPUT
+        echo "EXE_SIZE=$exeSize" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+      id: artifacts
+      
+    - name: Generate release notes
+      run: |
+        $version = "${{ steps.get_version.outputs.VERSION }}"
+        $releaseNotes = @"
+        # SyncFlow v$version
+        
+        ## 🚀 What's New
+        - Enhanced file transfer system with comprehensive progress tracking
+        - Storage space validation before transfers begin
+        - Improved error handling and retry functionality
+        - Modern UI with backdrop effects and better resource management
+        - Detailed transfer statistics and file counting
+        
+        ## 📦 Downloads
+        - **SyncFlow-v$version-win-x64.zip** (${{ steps.artifacts.outputs.ZIP_SIZE }} MB) - Complete package with all dependencies
+        - **SyncFlow-v$version-win-x64.exe** (${{ steps.artifacts.outputs.EXE_SIZE }} MB) - Standalone executable
+        
+        ## 🔧 System Requirements
+        - Windows 10 version 1809 or later
+        - Windows 11 (recommended for best visual effects)
+        - .NET 8.0 Runtime (included in standalone executable)
+        
+        ## 🛠️ Installation
+        1. Download either the ZIP package or standalone EXE
+        2. For ZIP: Extract and run SyncFlow.exe
+        3. For EXE: Run directly (first launch may take a moment to extract)
+        
+        ## 🐛 Bug Fixes
+        - Fixed file transfer counting accuracy
+        - Resolved Settings window resource binding errors
+        - Fixed Profile Editor backdrop effect issues
+        - Improved error handling throughout the application
+        
+        ---
+        
+        **Full Changelog**: https://github.com/${{ github.repository }}/compare/v1.0.0...v$version
+        "@
+        
+        Set-Content -Path "release-notes.md" -Value $releaseNotes
+      shell: pwsh
+      
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.get_version.outputs.VERSION }}
+        name: SyncFlow v${{ steps.get_version.outputs.VERSION }}
+        body_path: release-notes.md
+        files: |
+          release/SyncFlow-v${{ steps.get_version.outputs.VERSION }}-win-x64.zip
+          release/SyncFlow-v${{ steps.get_version.outputs.VERSION }}-win-x64.exe
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

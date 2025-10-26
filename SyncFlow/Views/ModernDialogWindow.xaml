@@ -1,0 +1,96 @@
+<ui:FluentWindow 
+    x:Class="SyncFlow.Views.ModernDialogWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="{Binding Title}"
+    Height="Auto"
+    Width="500"
+    MinHeight="200"
+    MaxHeight="600"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
+    ResizeMode="NoResize"
+    Background="{DynamicResource WindowBackgroundBrush}"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Round"
+    ShowInTaskbar="False">
+    
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header with Icon and Title -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Icon -->
+            <Border Grid.Column="0"
+                    Width="48"
+                    Height="48"
+                    CornerRadius="24"
+                    Background="{Binding IconBackground}"
+                    VerticalAlignment="Center"
+                    Margin="0,0,16,0">
+                <TextBlock Text="{Binding IconText}"
+                          FontSize="28"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Foreground="White"/>
+            </Border>
+
+            <!-- Title -->
+            <TextBlock Grid.Column="1"
+                      Text="{Binding Title}"
+                      FontSize="24"
+                      FontWeight="SemiBold"
+                      Foreground="{DynamicResource PrimaryTextBrush}"
+                      VerticalAlignment="Center"
+                      TextWrapping="Wrap"/>
+        </Grid>
+
+        <!-- Message Content -->
+        <ScrollViewer Grid.Row="1" 
+                     VerticalScrollBarVisibility="Auto"
+                     MaxHeight="300"
+                     Margin="0,0,0,20">
+            <TextBlock Text="{Binding Message}"
+                      FontSize="14"
+                      Foreground="{DynamicResource SecondaryTextBrush}"
+                      TextWrapping="Wrap"
+                      LineHeight="22"/>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" 
+                   Orientation="Horizontal"
+                   HorizontalAlignment="Right">
+            <!-- Primary Button (OK/Yes) -->
+            <Button x:Name="PrimaryButton"
+                   Content="{Binding PrimaryButtonText}"
+                   Click="OnPrimaryButtonClick"
+                   Visibility="{Binding PrimaryButtonVisibility}"
+                   Style="{StaticResource PrimaryButtonStyle}"
+                   MinWidth="100"
+                   Padding="16,10"
+                   Margin="0,0,8,0"
+                   IsDefault="True"/>
+
+            <!-- Secondary Button (Cancel/No) -->
+            <Button x:Name="SecondaryButton"
+                   Content="{Binding SecondaryButtonText}"
+                   Click="OnSecondaryButtonClick"
+                   Visibility="{Binding SecondaryButtonVisibility}"
+                   Style="{StaticResource SecondaryButtonStyle}"
+                   MinWidth="100"
+                   Padding="16,10"
+                   IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

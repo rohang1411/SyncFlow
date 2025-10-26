@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- Background Colors -->
+    <SolidColorBrush x:Key="BackgroundPrimary" Color="#1E1E1E"/>
+    <SolidColorBrush x:Key="BackgroundSecondary" Color="#252526"/>
+    <SolidColorBrush x:Key="BackgroundTertiary" Color="#2D2D2D"/>
+    <SolidColorBrush x:Key="CardBackground" Color="#2D2D30"/>
+    <SolidColorBrush x:Key="WindowBackground" Color="#1E1E1E"/>
+    
+    <!-- Foreground Colors -->
+    <SolidColorBrush x:Key="ForegroundPrimary" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ForegroundSecondary" Color="#CCCCCC"/>
+    <SolidColorBrush x:Key="ForegroundTertiary" Color="#999999"/>
+    
+    <!-- Accent Colors -->
+    <SolidColorBrush x:Key="AccentPrimary" Color="#0078D4"/>
+    <SolidColorBrush x:Key="AccentPrimaryHover" Color="#1890F0"/>
+    <SolidColorBrush x:Key="AccentSecondary" Color="#60CDFF"/>
+    
+    <!-- Border Colors -->
+    <SolidColorBrush x:Key="BorderBrush" Color="#3F3F46"/>
+    <SolidColorBrush x:Key="BorderHover" Color="#5F5F66"/>
+    
+    <!-- Button Colors -->
+    <SolidColorBrush x:Key="ButtonBackground" Color="#007ACC"/>
+    <SolidColorBrush x:Key="ButtonBackgroundHover" Color="#1890F0"/>
+    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#005A9E"/>
+    <SolidColorBrush x:Key="ButtonForeground" Color="#FFFFFF"/>
+    
+    <SolidColorBrush x:Key="ButtonSecondaryBackground" Color="#555555"/>
+    <SolidColorBrush x:Key="ButtonSecondaryBackgroundHover" Color="#666666"/>
+    <SolidColorBrush x:Key="ButtonSecondaryBackgroundPressed" Color="#444444"/>
+    
+    <SolidColorBrush x:Key="ButtonDangerBackground" Color="#A82A2A"/>
+    <SolidColorBrush x:Key="ButtonDangerBackgroundHover" Color="#C13636"/>
+    <SolidColorBrush x:Key="ButtonDangerBackgroundPressed" Color="#8B2020"/>
+    
+    <!-- State Colors -->
+    <SolidColorBrush x:Key="SuccessColor" Color="#16C60C"/>
+    <SolidColorBrush x:Key="WarningColor" Color="#FFC000"/>
+    <SolidColorBrush x:Key="ErrorColor" Color="#E81123"/>
+    <SolidColorBrush x:Key="InfoColor" Color="#0078D4"/>
+    
+    <!-- Progress Bar -->
+    <SolidColorBrush x:Key="ProgressBarBackground" Color="#333333"/>
+    <SolidColorBrush x:Key="ProgressBarForeground" Color="#0078D4"/>
+    
+    <!-- Input Controls -->
+    <SolidColorBrush x:Key="TextBoxBackground" Color="#2D2D30"/>
+    <SolidColorBrush x:Key="TextBoxForeground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="TextBoxBorder" Color="#3F3F46"/>
+    <SolidColorBrush x:Key="TextBoxBorderFocused" Color="#007ACC"/>
+    
+</ResourceDictionary>
