@@ -22,18 +22,19 @@ public class WindowsFileOperations : IFileOperations
     {
         try
         {
-            var dir = new DirectoryInfo(sourceDirectory);
-            if (!dir.Exists)
+            var sourceDir = new DirectoryInfo(sourceDirectory);
+            if (!sourceDir.Exists)
             {
                 throw new DirectoryNotFoundException($"Source directory not found: {sourceDirectory}");
             }
 
-            int filesCopied = 0;
-            DirectoryInfo[] dirs = dir.GetDirectories();
-
+            // Ensure destination directory exists
             Directory.CreateDirectory(destinationDirectory);
 
-            foreach (FileInfo file in dir.GetFiles())
+            int filesCopied = 0;
+
+            // Copy all files from source directory to destination directory
+            foreach (FileInfo file in sourceDir.GetFiles())
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -44,9 +45,12 @@ public class WindowsFileOperations : IFileOperations
                 }
             }
 
-            foreach (DirectoryInfo subdir in dirs)
+            // Recursively copy all subdirectories and their contents
+            foreach (DirectoryInfo subdir in sourceDir.GetDirectories())
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                
+                // Create corresponding subdirectory in destination
                 string newDestinationDir = Path.Combine(destinationDirectory, subdir.Name);
                 filesCopied += await CopyDirectoryAsync(subdir.FullName, newDestinationDir,
                     overwriteExisting, showProgressDialog, cancellationToken);

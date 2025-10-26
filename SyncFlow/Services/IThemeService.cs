@@ -27,6 +27,11 @@ public interface IThemeService
     void ToggleTheme();
 
     /// <summary>
+    /// Applies visual effects (transparency, glass) to all windows
+    /// </summary>
+    void ApplyVisualEffects();
+
+    /// <summary>
     /// Event raised when theme changes
     /// </summary>
     event EventHandler<string>? ThemeChanged;

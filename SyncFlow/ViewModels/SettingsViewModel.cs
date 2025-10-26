@@ -56,13 +56,27 @@ namespace SyncFlow.ViewModels
         public bool IsTransparencyEnabled
         {
             get => _isTransparencyEnabled;
-            set => SetProperty(ref _isTransparencyEnabled, value);
+            set
+            {
+                if (SetProperty(ref _isTransparencyEnabled, value))
+                {
+                    // Apply effects immediately for preview
+                    _themeService.ApplyVisualEffects();
+                }
+            }
         }
 
         public bool EnableGlassEffect
         {
             get => _enableGlassEffect;
-            set => SetProperty(ref _enableGlassEffect, value);
+            set
+            {
+                if (SetProperty(ref _enableGlassEffect, value))
+                {
+                    // Apply effects immediately for preview
+                    _themeService.ApplyVisualEffects();
+                }
+            }
         }
 
         public string ProfileStoragePath
@@ -94,13 +108,17 @@ namespace SyncFlow.ViewModels
             _settings.EnableGlassEffect = EnableGlassEffect;
             _settings.ProfileStoragePath = ProfileStoragePath;
 
+            // Apply final effects
+            _themeService.ApplyVisualEffects();
+
             SaveRequested?.Invoke(this, EventArgs.Empty);
         }
 
         private void ExecuteCancel(object? parameter)
         {
-            // Revert theme if cancelled
+            // Revert all settings if cancelled
             _themeService.ApplyTheme(_settings.IsDarkMode ? "Dark" : "Light");
+            _themeService.ApplyVisualEffects();
 
             CancelRequested?.Invoke(this, EventArgs.Empty);
         }

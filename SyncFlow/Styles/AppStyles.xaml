@@ -270,6 +270,11 @@
                                             Storyboard.TargetProperty="X"
                                             To="0"
                                             Duration="0:0:0.2"/>
+                                        <ColorAnimation
+                                            Storyboard.TargetName="BackgroundBorder"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="#2D2D2D"
+                                            Duration="0:0:0.2"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
